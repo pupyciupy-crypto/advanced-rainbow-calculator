@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Rainbow Calculator</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: #f0f8ff;
+    font-family: Arial, sans-serif;
+  }
+
+  .calculator {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    width: 95%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+
+  .display {
+    background: #e0e0e0;
+    color: #000;
+    font-size: 2rem;
+    padding: 10px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    text-align: right;
+    min-height: 60px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+    word-wrap: break-word;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+
+  button {
+    padding: 15px;
+    font-size: 1rem;
+    border: 3px solid black;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.1s;
+    color: #fff;
+    min-width: 50px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .num { background: #4CAF50; }         /* green numbers */
+  .operator { background: #2196F3; }    /* blue operators */
+  .func { background: #9C27B0; }        /* purple functions */
+  .clear { background: #F44336; }       /* red clear */
+  .delete { background: #4B0082; }      /* indigo delete */
+  .equals { background: #FF9800; }      /* orange equals */
+  .decimal { background: #FFEB3B; color: #000; } /* yellow decimal */
+
+  button:active { transform: translateY(2px); box-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+
+  .wide { grid-column: span 2; }
+  .equals-wide { grid-column: span 2; }
+
+  @media (max-width: 500px) {
+    .buttons { gap: 6px; }
+    button { padding: 12px; font-size: 0.9rem; }
+    .display { font-size: 1.7rem; min-height: 50px; }
+  }
+</style>
+</head>
+<body>
+<div class="calculator">
+  <div class="display" id="display">0</div>
+  <div class="buttons">
+    <button class="clear" onclick="clearDisplay()">C</button>
+    <button class="delete" onclick="backspace()">←</button>
+    <button class="func" onclick="appendValue('(')">(</button>
+    <button class="func" onclick="appendValue(')')">)</button>
+    <button class="operator" onclick="appendValue('/')">÷</button>
+    <button class="operator" onclick="appendValue('*')">×</button>
+
+    <button class="num" onclick="appendValue('7')">7</button>
+    <button class="num" onclick="appendValue('8')">8</button>
+    <button class="num" onclick="appendValue('9')">9</button>
+    <button class="operator" onclick="appendValue('-')">−</button>
+    <button class="func" onclick="squareRoot()">√</button>
+    <button class="func" onclick="power()">x²</button>
+
+    <button class="num" onclick="appendValue('4')">4</button>
+    <button class="num" onclick="appendValue('5')">5</button>
+    <button class="num" onclick="appendValue('6')">6</button>
+    <button class="operator" onclick="appendValue('+')">+</button>
+    <button class="func" onclick="percentage()">%</button>
+    <button class="func" onclick="factorial()">x!</button>
+
+    <button class="num" onclick="appendValue('1')">1</button>
+    <button class="num" onclick="appendValue('2')">2</button>
+    <button class="num" onclick="appendValue('3')">3</button>
+    <button class="num wide" onclick="appendValue('0')">0</button>
+    <button class="decimal" onclick="appendValue('.')">.</button>
+    <button class="func" onclick="appendValue('Math.PI')">π</button>
+
+    <button class="func" onclick="appendValue('Math.sin(')">sin</button>
+    <button class="func" onclick="appendValue('Math.cos(')">cos</button>
+    <button class="func" onclick="appendValue('Math.tan(')">tan</button>
+    <button class="func" onclick="appendValue('Math.log(')">log</button>
+    <button class="func" onclick="appendValue('Math.ln(')">ln</button>
+    <button class="equals equals-wide" onclick="calculate()">=</button>
+  </div>
+</div>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+
+  const display = document.getElementById('display');
+
+  function appendValue(val) {
+    if (display.innerText === '0' && val !== '.') display.innerText = val;
+    else display.innerText += val;
+  }
+
+  function clearDisplay() { display.innerText = '0'; }
+  function backspace() { display.innerText = display.innerText.slice(0,-1)||'0'; }
+  function squareRoot() { try { display.innerText = Math.sqrt(eval(display.innerText)); } catch { display.innerText='Error'; } }
+  function power() { try { display.innerText = Math.pow(eval(display.innerText),2); } catch { display.innerText='Error'; } }
+  function percentage() { try { display.innerText = eval(display.innerText)/100; } catch { display.innerText='Error'; } }
+  function factorial() {
+    try {
+      let n = eval(display.innerText);
+      if(n<0){ display.innerText='Error'; return; }
+      let result = 1;
+      for(let i=2;i<=n;i++) result *= i;
+      display.innerText=result;
+    } catch { display.innerText='Error'; }
+  }
+  function calculate() { try { display.innerText = eval(display.innerText); } catch { display.innerText='Error'; } }
+</script>
+</body>
+</html>
